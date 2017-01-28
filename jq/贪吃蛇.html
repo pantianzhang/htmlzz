@@ -1,0 +1,190 @@
+<html>
+<head>
+<meta http-equiv="Content-Type"charset="utf-8">
+<Style type="text/css">
+.main{
+	border:1px dashed #000;
+	border-color:gray;
+
+	position:absolute;
+	top:10px;
+	left:10px;
+	width:400px;
+	height:400px;
+}
+.snake{
+	position: absolute;
+	/*left:0px;
+	top:0px;*/
+	border:2px dashed #000;
+	border-color:gray;
+	width:8px;
+	height: 8px;
+	background-color: black;
+}
+.side{
+	position:absolute;
+	left:420px;
+	top:10px;
+	width:100px;
+	height: auto;
+}
+</style>
+<script src="http://cdn.static.runoob.com/libs/jquery/1.10.2/jquery.min.js">
+</script>
+<script>
+$(document).ready(function(){                  
+var width=400;               //宽
+var level=10;                
+var speed=300;
+var timeout=speed;
+var keepOn=true;         
+var direction='right';
+var target;
+$('.start').click(function(){
+init();                       //初始化蛇          （最好加个布尔判断开始没有）
+createTarget();               
+setTimeout(function(){
+ moveNode();
+ },timeout);
+})
+$('.end').click(function(){                           
+keepOn=false;
+})
+$('.restart').click(function(){      
+location.reload();
+
+})
+$('.level').change(function(){
+var l=$('.level').val();
+level=10*l;
+switch(l){
+case '1': $(".speed").val("1");
+				 timeout=speed;
+				 break;
+case '2': $(".speed").val("2");
+				 timeout=speed/2;
+				 break;
+case '3': $(".speed").val("1");
+				 timeout=speed/3;
+				 break;
+}
+})
+$('.speed').change(function(){
+var s=$('.speed').val();
+timeout=speed/s;
+})
+$(document).keypress(function(event){
+switch(event.keyCode){
+case 119:if(direction!='bottom') direction='top';break;
+case 115:if(direction!='top') direction='bottom';break;
+case 97:if(direction!='right') direction='left';break;
+case 100:if(direction!='left') direction='right';break;
+default:'';
+};
+})
+function createNode(top,left){    
+var node=new Object();
+node.top=top;
+node.left=left;
+return node;
+}
+function init(){                  
+$('.main').empty();
+var nodeOne=createNode(0,0);
+var nodeTwo=createNode(0,10);
+var nodeThree=createNode(0,20);
+append(nodeOne);
+append(nodeTwo);
+append(nodeThree);
+}
+function moveNode(){                   
+var move=$('.snake').first();
+var end=$('.snake').last().prev();
+var top,left;
+if(direction=='right'){
+top=end.css('top');
+left=parseInt(end.css('left'))+10;}
+if(direction=='left'){
+top=end.css('top');
+left=parseInt(end.css('left'))-10;}
+if(direction=='top'){
+top=parseInt(end.css('top'))-10;
+left=end.css('left');}
+if(direction=='bottom'){
+top=parseInt(end.css('top'))+10;
+left=end.css('left');}
+left=parseInt(left);
+top=parseInt(top);
+if(left<0 || left>width-10 || top<0 || top>width-10){
+alert('you lose!');
+return false;
+}
+if(left==target.left&&top==target.top){
+createTarget();                                //如果吃到，生成一个新的随机点
+if($('snake').length>level+3){
+alert('you win');                                //少了触碰身体的判断
+return true;
+}}
+move.remove();                                //移除第一个SNAKE，或者点
+move=createNode(top,left);                    
+addBefore(move);                              //生成新的snake.
+if(keepOn){
+setTimeout(function(){
+				moveNode();
+			},timeout);
+}
+}
+function createTarget(){
+var top=Math.ceil(Math.random()*10)*width/10-10;
+var left=Math.ceil(Math.random()*10)*width/10-10;
+target=createNode(top,left);
+append(target);
+}
+function append(node){
+var div='<div class="snake" style="top:'+node.top+';left:'+node.left+';"></div>';
+$('.main').append(div);
+}
+function addBefore(node){
+var div='<div class="snake" style="top:'+node.top+';left:'+node.left+';"></div>';
+$(".snake").last().before(div);                                                       
+
+}
+
+
+
+
+
+})
+ 
+
+
+</script>
+</head>
+<body>
+	<!-- 显示界面 -->
+	<div class="main">
+		<div class="snake" style="top:0;left:0;"></div>
+		<div class="snake" style="top:0;left:10;"></div>
+		<div class="snake" style="top:0;left:20;"></div>
+	</div>
+	<!-- 右侧栏 -->
+	<div class="side">
+		<input class="start" type="button" value="开始">
+		<input class="restart" type="button" value="重置">
+		<input class="end" type="button" value="停止"><br><br>
+		难度:<select class='level'>
+			<option value="1">简单</option>
+			<option value="2">一般</option>
+			<option value="3">困难</option>
+			<option value="100">无尽</option>
+		</select>
+		速度:<select class='speed'>s
+			<option value="1">慢</option>
+			<option value="2">中</option>
+			<option value="5">快</option>
+		</select>
+		<p>操作说明：wasd分别对应上左下右</p>
+	</div>
+</body>
+</html>

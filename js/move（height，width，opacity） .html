@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+                
+            }
+            #li1,#li2{
+                width: 200px;
+                height: 50px;
+                background: red;
+                border: 2px solid deepskyblue;
+                list-style: none;
+                filter: alpha(opacity:30);/*IE*/
+                opacity: 0.3;    
+            }
+        </style>
+      
+        <script>
+            window.onload = function(){
+                var Li = document.getElementsByTagName('li');
+				for (var i=0;i<Li.length;i++){  
+               Li[i].onmouseover=function(){
+			    var kkk = this
+			   startMove(kkk,{width:400,height:200,opacity:100},function(){
+			   
+			   startMove(kkk,{width:200,height:100,opacity:0})
+			   });
+			   
+			
+			   }
+			 
+               Li[i].onmouseout=function(){
+			   startMove(this,{width:200,height:50,opacity:30});
+			   
+			   }
+			
+}
+		
+}		
+			function startMove(obj,json,fn){  
+            clearInterval(obj.timer);
+                obj.timer = setInterval(function(){
+                for(var attr in json){
+
+				
+				var flag=true
+                var icur = 0;
+                if(attr == "opacity"){
+                    icur = Math.round(parseFloat(getStyle(obj,attr))*100);
+                }else{
+                    icur =parseInt(getStyle(obj,attr));
+                }
+              //get obj width height opacity  
+                var speed =(json[attr]-icur)/8;
+                    speed=speed>0?Math.ceil(speed):Math.floor(speed);
+               
+                    if(icur !== json[attr]){
+					flag=false;
+                    }
+                        if(attr =="opacity"){
+                        obj.style.filter ="alpha(opacity:"+(icur+speed)+")";
+                        obj.style.opacity = (icur+speed)/100;
+                        }else{
+                        obj.style[attr] = icur+speed+"px";
+                        obj.style.fontSize = parseInt(getStyle(obj,'fontSize'))+1+"px";      
+                        }
+                        }
+						if (flag){
+						clearInterval(obj.time);
+						if(fn)
+						{
+						fn()
+						}
+						}
+						
+                },30)
+            }  
+    
+
+
+     
+function getStyle(obj,attr){
+if(obj.currentStyle)
+{
+return obj.currentStyle[attr]//ie 
+}
+ else
+ {
+ return getComputedStyle(obj,false)[attr]
+ }
+}
+
+			
+        </script>
+    </head>
+    <body>
+        <ul>
+            <li id="li1"><i></i></li>
+			<li id="li2"><i></i></li>
+        </ul>
+    </body>
+</html>
+  
